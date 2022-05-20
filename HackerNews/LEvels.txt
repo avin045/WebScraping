@@ -1,0 +1,53 @@
+My Method:
+
+from asyncio.windows_events import NULL
+from http.client import responses
+from os import link
+from turtle import title
+import requests
+from bs4 import BeautifulSoup
+
+response = requests.get('https://news.ycombinator.com/news')
+
+# print(response.text)
+
+soup = BeautifulSoup(response.text,'html.parser')
+
+# Soup Contents
+# print(soup.span.contents)
+
+# Find Id
+# print(soup.find(id='score_31384553'))
+
+# Select via CSS Selectors
+# print(soup.select('.score'))
+
+# get Links from class='titlelink'
+links = soup.select('.titlelink')
+# print(links)
+
+# Get Score from class='subtext' and the select class='score'
+subtext = soup.select('.subtext')
+# print(votes)
+
+def custom_hackerNews(links,subtext):
+    hn = []
+    for idx,item in enumerate(links):
+        # print(idx)
+        # print(item)
+        title = links[idx].getText()  # Getting text from all the links.
+        href = links[idx].get('href',None) # None => Default parameter  # Getting href of all the links.
+        vote = subtext[idx].select('.score')
+        if len(vote):
+            convert_points = int(vote[0].getText().replace(' points',''))
+            #                   Grab vote[0] => from class='score'
+            hn.append({"title": title, "link": href,'votes':convert_points})
+
+    # print(hn)
+    for id,data in enumerate(hn):
+        if hn[id]['votes'] > 99:
+            print(f"Title : {hn[id]['title']}\nVotes : {hn[id]['votes']}")
+
+    return hn
+
+custom_hackerNews(links,subtext)
